@@ -66,7 +66,49 @@
   (it "handles further text after #+begin_ai"
     (expect (org-ai-to-md--is-begin-ai-block-p "#+begin_ai extra text here") :to-be t)))
 
-(describe "is-markdown-quote-p")
+(describe "is-markdown-quote-p"
+  (it "handle empty input string"
+    (expect (org-ai-to-md--is-markdown-quote-p "") :to-be nil))
+
+  (it "handle triple backquote at start of line on the line"
+    (expect (org-ai-to-md--is-markdown-quote-p "```") :to-be t)
+    (expect (org-ai-to-md--is-markdown-quote-p "``` ") :to-be t))
+
+  (it "handle triple backquote with language appended"
+    (expect (org-ai-to-md--is-markdown-quote-p "```elisp") :to-be t)
+    (expect (org-ai-to-md--is-markdown-quote-p "```elisp ") :to-be t))
+
+  (it "handle after language strings"
+    (expect (org-ai-to-md--is-markdown-quote-p "```elisp elisp") :to-be nil))
+
+  (if "handle invalid space before language name"
+    (expect (org-ai-to-md--is-markdown-quote-p "``` elisp") :to-be nil))
+
+  (it "handle whitespace in front of triple backquote"
+    (expect (org-ai-to-md--is-markdown-quote-p " ```") :to-be t)
+    (expect (org-ai-to-md--is-markdown-quote-p "  ```elisp ") :to-be t)))
+
+(describe "get-markdown-language"
+  (it "handle empty string"
+    (expect (org-ai-to-md--get-markdown-language "") :to-be ""))
+
+  (it "handle no language"
+    (expect (org-ai-to-md--get-markdown-language "```") :to-be "")
+    (expect (org-ai-to-md--get-markdown-language " ``` ") :to-be ""))
+
+  (it "handle simple language"
+    (expect (org-ai-to-md--get-markdown-language "```elisp") :to-equal "elisp")
+    (expect (org-ai-to-md--get-markdown-language " ```elisp ") :to-equal "elisp"))
+
+  (it "handle language with - and _"
+    (expect (org-ai-to-md--get-markdown-language "```emacs-lisp") :to-equal "emacs-lisp")
+    (expect (org-ai-to-md--get-markdown-language " ```emacs_lisp ") :to-equal "emacs_lisp"))
+
+  (it "invalid string with two words"
+    (expect (org-ai-to-md--get-markdown-language "```elisp elisp") :to-equal "")))
+
+
+
 
 (provide 'test-org-ai-to-md)
 

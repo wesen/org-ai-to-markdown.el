@@ -67,14 +67,17 @@ Iterates over the lines and accumulates them by calling HANDLE-LINE."
   "Return T if the line S is the end of an org-mode source block."
   (s-matches-p "^[\s\t]*#\\+end_src" s))
 
+(defvar org-ai-to-md--md-regexp
+  "^[\s\t]*```\\([a-zA-Z0-9-_]*\\)?[\s\t]*$")
+
 (defun org-ai-to-md--is-markdown-quote-p (s)
   "Return T if the line is a triple-backquote markdown source block."
-  (s-matches-p "^[\s\t]*```" s))
+  (s-matches-p org-ai-to-md--md-regexp s))
 
-(defun org-ai-to-md--get-markdown-quote-language (s)
+(defun org-ai-to-md--get-markdown-language (s)
   "Return the language of the markdown quote S (if no language is present,
 returns \"\"."
-  (let ((match (s-match "^[\s\t]*```\\([a-zA-Z0-9-_]\\)" s)))
+  (let ((match (s-match org-ai-to-md--md-regexp s)))
     (if match
         (nth 1 match)
       "")))
