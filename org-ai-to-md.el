@@ -9,7 +9,7 @@
 ;; Version: 0.0.1
 ;; Keywords: abbrev bib c calendar comm convenience data docs emulations extensions faces files frames games hardware help hypermedia i18n internal languages lisp local maint mail matching mouse multimedia news outlines processes terminals tex tools unix vc wp
 ;; Homepage: https://github.com/wesen/org-ai-to-markdown
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "24.3") (s "1.13.1") (buttercup "1.29"))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -49,7 +49,6 @@ Iterates over the lines and accumulates them by calling HANDLE-LINE."
   (dolist (line lines state)
     (setq state (org-ai-to-md--handle-lines state output-buffer line))))
 
-(require 's)
 
 (defun org-ai-to-md--is-begin-ai-block-p (s)
   "Return T if the line S is the begin of an org-ai block."
