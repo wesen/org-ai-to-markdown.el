@@ -107,8 +107,40 @@
   (it "invalid string with two words"
     (expect (org-ai-to-md--get-markdown-language "```elisp elisp") :to-equal "")))
 
+(describe "test-dialogue-change"
+  (it "handle empty string"
+    (expect (org-ai-to-md--get-ai-dialogue-change "") :to-be nil))
 
+  (it "handle string with no dialogue change"
+    (expect (org-ai-to-md--get-ai-dialogue-change "some text") :to-be nil))
 
+  (it "handle string with dialogue change of valid partner"
+    (expect (org-ai-to-md--get-ai-dialogue-change "[AI]:") :to-equal "AI")
+    (expect (org-ai-to-md--get-ai-dialogue-change "[ME]:") :to-equal "ME")
+    (expect (org-ai-to-md--get-ai-dialogue-change "[SYS]:") :to-equal "SYS"))
+
+  (it "handle valid partner with whitespace up front"
+    (expect (org-ai-to-md--get-ai-dialogue-change " [AI]:") :to-equal "AI")
+    (expect (org-ai-to-md--get-ai-dialogue-change " [ME]:") :to-equal "ME")
+    (expect (org-ai-to-md--get-ai-dialogue-change " [SYS]:") :to-equal "SYS"))
+
+  (it "handle valid partner followed with conversation"
+    (expect (org-ai-to-md--get-ai-dialogue-change "[AI]: some text") :to-equal "AI")
+    (expect (org-ai-to-md--get-ai-dialogue-change "[ME]: some text") :to-equal "ME")
+    (expect (org-ai-to-md--get-ai-dialogue-change "[SYS]: some text") :to-equal "SYS"))
+
+  (it "handle valid partner followed by conversation with [] symbols"
+    (expect (org-ai-to-md--get-ai-dialogue-change "[AI]: [some text]") :to-equal "AI")
+    (expect (org-ai-to-md--get-ai-dialogue-change "[ME]: [some text]") :to-equal "ME")
+    (expect (org-ai-to-md--get-ai-dialogue-change "[SYS]: [some text]") :to-equal "SYS"))
+
+  (it "handle valid partner with preceding text (invalid dialogue)"
+    (expect (org-ai-to-md--get-ai-dialogue-change "some text [AI]:") :to-be nil)
+    (expect (org-ai-to-md--get-ai-dialogue-change "some text [ME]:") :to-be nil)
+    (expect (org-ai-to-md--get-ai-dialogue-change "some text [SYS]:") :to-be nil))
+
+  (it "handle string with [] but not a valid dialogue partner"
+    (expect (org-ai-to-md--get-ai-dialogue-change "[some text]") :to-be nil)))
 
 (provide 'test-org-ai-to-md)
 

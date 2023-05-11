@@ -82,5 +82,18 @@ returns \"\"."
         (nth 1 match)
       "")))
 
+(defun org-ai-to-md--get-ai-dialogue-change (s &optional partners)
+  "Return the speaker change in the dialogue S (in the form [ME]) or nil if no
+change took place. PARTNERS is a list of valid partners (default: \"SYS\", \"ME\",
+\"AI\")."
+  (let* ((valid-partner-re (format "\\(?:%s\\)"
+                                   (s-join "\\|" (or partners '("SYS" "ME" "AI")))))
+         (re (format "^\s*\\[\\(%s\\)\\]" valid-partner-re))
+         (match (s-match re s)))
+    (message re)
+    (if match
+        (nth 1 match)
+      nil)))
+
 (provide 'org-ai-to-md)
 ;;; org-ai-to-md.el ends here
