@@ -4,6 +4,7 @@
 # Packaging
 .cask
 .sandbox
+sandbox/
 
 # Backup files
 *~

@@ -9,7 +9,7 @@
 ;; Version: 0.0.1
 ;; Keywords: abbrev bib c calendar comm convenience data docs emulations extensions faces files frames games hardware help hypermedia i18n internal languages lisp local maint mail matching mouse multimedia news outlines processes terminals tex tools unix vc wp
 ;; Homepage: https://github.com/wesen/org-ai-to-markdown
-;; Package-Requires: ((emacs "24.3") (s "1.13.1") (buttercup "1.29"))
+;; Package-Requires: ((emacs "24.3") (s "1.13.1"))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -21,6 +21,7 @@
 
 
 (require 'cl-lib)
+(require 's)
 
 (cl-defstruct org-ai-to-md-state
   "Represents the internal state of the state machine used to convert org-ai flavoured org mode files to markdown."

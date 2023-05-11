@@ -19,8 +19,8 @@
 ;;
 ;;; Code:
 
-(require 'org-ai-to-md)
 (require 'buttercup)
+(require 'org-ai-to-md)
 
 (describe "org-ai-to-md--is-begin-ai-block-p"
   (it "handles empty input string"

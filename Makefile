@@ -19,6 +19,9 @@ ifdef install-linters
 	INSTALL_LINTERS = "--install-linters"
 endif
 
+# set sandbox automatically
+sandbox = .sandbox
+
 ifdef sandbox
 	ifeq ($(sandbox), t)
 		SANDBOX = --sandbox
