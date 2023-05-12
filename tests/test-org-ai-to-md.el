@@ -142,6 +142,26 @@
   (it "handle string with [] but not a valid dialogue partner"
     (expect (org-ai-to-md--get-ai-dialogue-change "[some text]") :to-be nil)))
 
+ (describe "test creating regexps for matching lower and uppercase"
+  (let ((title-re (org-ai-to-md--string-to-lower-uppercase-re "title"))
+        (case-fold-search nil))
+    (it "handle empty string"
+      (expect (org-ai-to-md--string-to-lower-uppercase-re "") :to-equal ""))
+
+    (it "handle string with no uppercase"
+      (let ((case-fold-search nil))
+        (expect
+         (s-matches-p (org-ai-to-md--string-to-lower-uppercase-re "title") "TITLE") :to-be t)
+        ;; Not sure that this is what we want in terms of behaviour, should we be able to recognize
+        ;; #+TiTlE: as a valid title?
+        (expect
+         (s-matches-p (org-ai-to-md--string-to-lower-uppercase-re "title") "Title") :to-be nil)))
+
+    (it "handle string with uppercase"
+      (expect (s-matches-p (org-ai-to-md--string-to-lower-uppercase-re "title") "title") :to-be t)
+      (expect (s-matches-p (org-ai-to-md--string-to-lower-uppercase-re "title") "Foobar") :to-be nil))))
+
+
 (provide 'test-org-ai-to-md)
 
 ;;; test-org-ai-to-md.el ends here

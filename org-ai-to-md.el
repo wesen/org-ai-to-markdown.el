@@ -82,18 +82,35 @@ returns \"\"."
         (nth 1 match)
       "")))
 
+(defun org-ai-to-md--make-multi-choice-re (choices)
+  "Return a regular expression that matches any of the strings in CHOICES."
+  (format "\\(?:%s\\)" (s-join "\\|" choices)))
+
 (defun org-ai-to-md--get-ai-dialogue-change (s &optional partners)
   "Return the speaker change in the dialogue S (in the form [ME]) or nil if no
 change took place. PARTNERS is a list of valid partners (default: \"SYS\", \"ME\",
 \"AI\")."
-  (let* ((valid-partner-re (format "\\(?:%s\\)"
-                                   (s-join "\\|" (or partners '("SYS" "ME" "AI")))))
-         (re (format "^\s*\\[\\(%s\\)\\]" valid-partner-re))
+  (let* ((re (format "^\s*\\[\\(%s\\)\\]"
+                     (org-ai-to-md--make-multi-choice-re (or partners '("SYS" "ME" "AI")))))
          (match (s-match re s)))
     (message re)
     (if match
         (nth 1 match)
       nil)))
+
+(defun org-ai-to-md--is-heading-p (s)
+  "Returns T if the line S is an org-mode heading."
+  (s-matches-p "^[\s\t]*\\*+" s))
+
+(defun org-ai-to-md--string-to-lower-uppercase-re (s)
+  "Converts the string S to a regular expression that matches the string in
+lowercase or uppercase."
+  (if (equal s "") ""
+    (org-ai-to-md--make-multi-choice-re (list (downcase s) (upcase s)))))
+
+(defun org-ai-to-md--is-title-p (s)
+  "Returns T if the line S is an org-mode title."
+  (s-matches-p (format  "^[\s\t]*#\\+%s:" (org-ai-to-md--string-to-lower-uppercase-re "title")) s))
 
 (provide 'org-ai-to-md)
 ;;; org-ai-to-md.el ends here
