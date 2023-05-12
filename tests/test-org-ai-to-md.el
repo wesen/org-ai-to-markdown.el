@@ -21,6 +21,7 @@
 
 (require 'buttercup)
 (require 'org-ai-to-md)
+(require 'names)
 
 (describe "org-ai-to-md--is-begin-ai-block-p"
   (it "handles empty input string"
@@ -161,6 +162,27 @@
       (expect (s-matches-p (org-ai-to-md--string-to-lower-uppercase-re "title") "title") :to-be t)
       (expect (s-matches-p (org-ai-to-md--string-to-lower-uppercase-re "title") "Foobar") :to-be nil))))
 
+(describe "test extracting the title out of a title line"
+  (it "extract simple title"
+    (expect (org-ai-to-md--get-title "#+TITLE: foobar") :to-equal "foobar")))
+
+(defmacro with-test-state (state-args &rest body)
+  "Create a state and execute BODY with the state as argument."
+  (cl-destructuring-bind (state start-state) state-args
+    `(let ((,state (make-org-ai-to-md-state :state ,start-state)))
+       (with-temp-buffer
+         ,@body))))
+
+(describe "test transitions out of normal state"
+  (it "Test normal line being forwarded"
+    (with-test-state (state :normal)
+                     (org-ai-to-md--handle-state-normal state "foobar" nil)
+                     (expect (buffer-string) :to-equal "foobar")))
+
+  (it "Test title being converted to H1 markdown title"
+    (with-test-state (state :normal)
+                     (org-ai-to-md--handle-state-normal state "#+TITLE: foobar" :title)
+                     (expect (buffer-string) :to-equal "# foobar"))))
 
 (provide 'test-org-ai-to-md)
 
